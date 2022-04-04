@@ -2,7 +2,10 @@ import json
 import pymysql
 from random import randrange
 import os
-from flask import Flask, request, render_template
+from flask import *
+from flask_cors import CORS, cross_origin
+
+
 
 host = "localhost"
 user = "root"
@@ -11,6 +14,8 @@ database = "biblioteca"
 charset = "utf8"
 
 app = Flask(__name__, template_folder='front')
+cors=CORS(app)
+app.config['CORS_HEADERS'] ='Content-Type'
 
 # public // Creates the db dynamically // Crea la base de datos dinámicamente
 @app.route('/creaDB', methods=['POST'])
@@ -132,7 +137,7 @@ def __creaAutores() -> None:
     data = cursor.fetchone()
     db.close()
 
-@app.route('/recuperarTodosLibros', methods=['POST'])
+@app.route('/recuperarTodosLibros', methods=['GET'])
 def recuperarTodosLibros():
         db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
         cursor= db.cursor()
@@ -144,7 +149,7 @@ def recuperarTodosLibros():
 
         db.commit()
         db.close()
-        return json.dumps([True,libros])
+        return Response(json.dumps(libros), mimetype="application/json")
 
 @app.route('/recuperarTodosAutores', methods=['POST'])
 def recuperarTodosAutores():
