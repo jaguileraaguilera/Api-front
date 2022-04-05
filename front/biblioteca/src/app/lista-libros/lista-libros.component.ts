@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ServicioLibrosService } from '../servicio-libros.service';
+import { Libro } from '../entidades/libro';
 
 @Component({
   selector: 'app-lista-libros',
@@ -7,19 +8,12 @@ import { ServicioLibrosService } from '../servicio-libros.service';
   styleUrls: ['./lista-libros.component.css']
 })
 
-class Libro {
-  constructor() {
-    // POR AQUI SIGO
-  }
-}
-
 export class ListaLibrosComponent implements OnInit {
-  filtrada = false;
+  filtro_busqueda = "";
   lista_libros = new Array();
 
   constructor(public datosLibros : ServicioLibrosService) {
-    // this.lista_libros = datosLibros.listarLibros();
-   }
+  }
 
   ngOnInit(): void {
     this.datosLibros.listarLibros().subscribe(data =>
@@ -27,16 +21,22 @@ export class ListaLibrosComponent implements OnInit {
   }
 
   mostrarLibros() {
-    
-    let mostrar = []
-    if (!this.filtrada) {
-      for (let lista of this.lista_libros) {
-        for (let libro of lista)
-          mostrar.push(libro)
+    let mostrar = [];
+
+    for (let lista_anidada of this.lista_libros) {
+      for (let registro of lista_anidada) {
+        let libro = new Libro(...registro);
+
+        if (!this.filtro_busqueda)
+          mostrar.push(libro);
+        else {
+          if (libro.id == this.filtro_busqueda)
+            mostrar.push(libro);
+        }
       }
     }
-    console.log(mostrar)
-    return mostrar
-  }
 
+    return mostrar;
+  }
+  
 }

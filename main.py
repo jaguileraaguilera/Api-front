@@ -139,31 +139,31 @@ def __creaAutores() -> None:
 
 @app.route('/recuperarTodosLibros', methods=['GET'])
 def recuperarTodosLibros():
-        db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
-        cursor= db.cursor()
-        cursor.execute("SELECT * FROM libros")
+    db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
+    cursor= db.cursor()
+    cursor.execute("SELECT * FROM libros")
 
-        libros =[]
-        for item in cursor.fetchall():
-            libros.append(item)
+    libros =[]
+    for item in cursor.fetchall():
+        libros.append(item)
 
-        db.commit()
-        db.close()
-        return Response(json.dumps(libros), mimetype="application/json")
+    db.commit()
+    db.close()
+    return Response(json.dumps(libros), mimetype="application/json")
 
-@app.route('/recuperarTodosAutores', methods=['POST'])
+@app.route('/recuperarTodosAutores', methods=['GET'])
 def recuperarTodosAutores():
-        db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
-        cursor= db.cursor()
-        cursor.execute("SELECT * FROM autores")
+    db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
+    cursor= db.cursor()
+    cursor.execute("SELECT * FROM autores")
 
-        autores =[]
-        for item in cursor.fetchall():
-            autores.append(item)
+    autores =[]
+    for item in cursor.fetchall():
+        autores.append(item)
 
-        db.commit()
-        db.close()
-        return json.dumps([True,autores])
+    db.commit()
+    db.close()
+    return Response(json.dumps(autores),mimetype="application/json")
 
 # public // Read the sql file that modify the db // Lee el archivo sql que va a modficar la base de datos
 @app.route('/nuevoRegistroPorArchivo', methods=['POST'])
@@ -209,7 +209,7 @@ def nuevoRegistroPorTexto()->list:
         return json.dumps([False, "[ERROR]:" + str(e)])
 
 # public // Remove Author // Elimina Autor
-@app.route('/eliminarAutor', methods=['POST'])
+@app.route('/eliminarAutor', methods=['DELETE'])
 def eliminarAutor()->list:
     id_autor:str = request.form['id_autor']
 
@@ -225,11 +225,11 @@ def eliminarAutor()->list:
         db.commit()
         db.close()
 
-        return json.dumps([True,"eliminado correctamente"])
+        return Response(json.dumps("eliminado correctamente"),mimetype="application/json")
 
     except Exception as e:
        
-        return json.dumps([False,"An error has ocurred:" +str(e)])
+        return Response(json.dumps("An error has ocurred:" +str(e)),mimetype="application/json")
 
 
 # public // Search book // Busca libro 
@@ -271,19 +271,19 @@ def addLibro()->list:
             id_autor:int = item[0]
 
         cursor.execute("SET FOREIGN_KEY_CHECKS=0")
-        cursor.execute(sentencia)
         sentencia:str = f"INSERT INTO libros (id,id_autor,titulo, editorial, lugar_publicacion, fecha, descripcion) VALUE ('{id_libro}',{id_autor},'{titulo}','{editorial}','{lugar_publicacion}','{fecha}','{descripcion}')"
-        
         cursor.execute(sentencia)
+        
+        
         cursor.execute("SET FOREIGN_KEY_CHECKS=1")
 
         
         db.commit()
         db.close()
 
-        return json.dumps([True,"Datos insertados correctamente"])
+        return Response(json.dumps("Datos insertados correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"[ERROR]" + str(e)])
+        return Response(json.dumps("[ERROR]" + str(e)),mimetype="application/json")
 
 @app.route('/addAutor', methods=['POST'])
 def addAutor()->list:
@@ -296,18 +296,19 @@ def addAutor()->list:
         
         sentencia:str = "INSERT INTO autores (nombre, lugar_nacimiento) VALUE ('"+nombre_autor+"','"+lugar_nacimiento+"')"
         
+        cursor.execute(sentencia)
         db.commit()
         db.close()
 
-        return json.dumps([True,"Datos insertados correctamente"])
+        return Response(json.dumps("Datos insertados correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"[ERROR]" + str(e)])
+        return Response(json.dumps("[ERROR]" + str(e)),mimetype="application/json")
 
 
 
 # public // Edit the book with the parameters given // Edita el libro con los parametros dados
 # Hay que pasar todos los atributos aunque no los vayamos a modificar. No se puede modificar el id del autor.
-@app.route('/editarLibro', methods=['POST'])
+@app.route('/editarLibro', methods=['PUT'])
 def editarLibro()->list:
     id_libro:str = request.form['id_libro']
     titulo:str = request.form['titulo']
@@ -327,11 +328,11 @@ def editarLibro()->list:
         db.commit()
         db.close()
 
-        return json.dumps([True,"Libro actualizado correctamente"])
+        return Response(json.dumps("Libro actualizado correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"An error has ocurred:" + str(e)])
+        return Response(json.dumps("An error has ocurred:" + str(e)),mimetype="application/json")
 
-@app.route('/editarAutor', methods=['POST'])
+@app.route('/editarAutor', methods=['PUT'])
 def editarAutor()->list:
     id_autor:str = request.form['id_autor']
     nombre:str = request.form['nombre']
@@ -348,9 +349,9 @@ def editarAutor()->list:
         db.commit()
         db.close()
 
-        return json.dumps([True,"Autor actualizado correctamente"])
+        return Response(json.dumps("Autor actualizado correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"An error has ocurred:"+ str(e)])
+        return Response(json.dumps("An error has ocurred:"+ str(e)),mimetype="application/json")
 
 
 #TEST FUNCTIONS FOR CALLING FROM FRONT
