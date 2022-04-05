@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,21 @@ export class ServicioLibrosService {
 
   public listarLibros() {  
     return this.http.get(`${this.endPoint}recuperarTodosLibros`);
+  }
+
+  public modificarLibros(id) {  
+    return this.http.get(`${this.endPoint}editarLibro/${id}`);
+  }
+
+  public modificarLibrosPost(libro) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json; charset=utf-8');  
+    return this.http.put(`${this.endPoint}editarLibro/${libro.id}`, libro.toJson(),
+    {headers: headers});
+  }
+
+  public modificarAutores(id) {  
+    return this.http.get(`${this.endPoint}editarAutor/${id}`);
   }
   
   // /**
