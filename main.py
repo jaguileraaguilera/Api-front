@@ -2,7 +2,10 @@ import json
 import pymysql
 from random import randrange
 import os
-from flask import Flask, request, render_template
+from flask import *
+from flask_cors import CORS, cross_origin
+
+
 
 host = "localhost"
 user = "root"
@@ -11,6 +14,8 @@ database = "biblioteca"
 charset = "utf8"
 
 app = Flask(__name__, template_folder='front')
+cors=CORS(app)
+app.config['CORS_HEADERS'] ='Content-Type'
 
 # public // Creates the db dynamically // Crea la base de datos dinámicamente
 @app.route('/creaDB', methods=['POST'])
@@ -132,33 +137,33 @@ def __creaAutores() -> None:
     data = cursor.fetchone()
     db.close()
 
-@app.route('/recuperarTodosLibros', methods=['POST'])
+@app.route('/recuperarTodosLibros', methods=['GET'])
 def recuperarTodosLibros():
-        db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
-        cursor= db.cursor()
-        cursor.execute("SELECT * FROM libros")
+    db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
+    cursor= db.cursor()
+    cursor.execute("SELECT * FROM libros")
 
-        libros =[]
-        for item in cursor.fetchall():
-            libros.append(item)
+    libros =[]
+    for item in cursor.fetchall():
+        libros.append(item)
 
-        db.commit()
-        db.close()
-        return json.dumps([True,libros])
+    db.commit()
+    db.close()
+    return Response(json.dumps(libros), mimetype="application/json")
 
-@app.route('/recuperarTodosAutores', methods=['POST'])
+@app.route('/recuperarTodosAutores', methods=['GET'])
 def recuperarTodosAutores():
-        db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
-        cursor= db.cursor()
-        cursor.execute("SELECT * FROM autores")
+    db = pymysql.connect(host =host, user =user, passwd = password, db = database, charset = charset)
+    cursor= db.cursor()
+    cursor.execute("SELECT * FROM autores")
 
-        autores =[]
-        for item in cursor.fetchall():
-            autores.append(item)
+    autores =[]
+    for item in cursor.fetchall():
+        autores.append(item)
 
-        db.commit()
-        db.close()
-        return json.dumps([True,autores])
+    db.commit()
+    db.close()
+    return Response(json.dumps(autores),mimetype="application/json")
 
 # public // Read the sql file that modify the db // Lee el archivo sql que va a modficar la base de datos
 @app.route('/nuevoRegistroPorArchivo', methods=['POST'])
@@ -204,7 +209,7 @@ def nuevoRegistroPorTexto()->list:
         return json.dumps([False, "[ERROR]:" + str(e)])
 
 # public // Remove Author // Elimina Autor
-@app.route('/eliminarAutor', methods=['POST'])
+@app.route('/eliminarAutor', methods=['DELETE'])
 def eliminarAutor()->list:
     id_autor:str = request.form['id_autor']
 
@@ -220,27 +225,27 @@ def eliminarAutor()->list:
         db.commit()
         db.close()
 
-        return json.dumps([True,"eliminado correctamente"])
+        return Response(json.dumps("eliminado correctamente"),mimetype="application/json")
 
     except Exception as e:
        
-        return json.dumps([False,"An error has ocurred:" +str(e)])
+        return Response(json.dumps("An error has ocurred:" +str(e)),mimetype="application/json")
 
 
 # public // Search book // Busca libro 
 @app.route('/realizarBusquedaLibro', methods=['POST']) 
-def realizarBusquedaLibro()->list: # búsqueda por id
+def realizarBusquedaLibro()-> list: # búsqueda por id
     busqueda:str = request.form['busqueda']
 
     db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
     cursor= db.cursor()
-    cursor.execute("SELECT titulo, editorial, lugar_publicacion, fecha, descripcion FROM libros WHERE id= '"+busqueda+"'")
+    cursor.execute("SELECT * FROM libros WHERE id= '"+busqueda+"'")
     libros = []
     for item in cursor.fetchall():
         libros.append(item)
     db.commit()
     db.close()
-    return json.dumps([True, libros])
+    return Response(json.dumps(libros), mimetype="application/json")
 
 # public // Creates a new row inside table // Crea una nueva fila dentro de la tabla   
 # id_libro must have the same structure that in the db "a1234567"
@@ -266,19 +271,19 @@ def addLibro()->list:
             id_autor:int = item[0]
 
         cursor.execute("SET FOREIGN_KEY_CHECKS=0")
-        cursor.execute(sentencia)
         sentencia:str = f"INSERT INTO libros (id,id_autor,titulo, editorial, lugar_publicacion, fecha, descripcion) VALUE ('{id_libro}',{id_autor},'{titulo}','{editorial}','{lugar_publicacion}','{fecha}','{descripcion}')"
-        
         cursor.execute(sentencia)
+        
+        
         cursor.execute("SET FOREIGN_KEY_CHECKS=1")
 
         
         db.commit()
         db.close()
 
-        return json.dumps([True,"Datos insertados correctamente"])
+        return Response(json.dumps("Datos insertados correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"[ERROR]" + str(e)])
+        return Response(json.dumps("[ERROR]" + str(e)),mimetype="application/json")
 
 @app.route('/addAutor', methods=['POST'])
 def addAutor()->list:
@@ -291,42 +296,55 @@ def addAutor()->list:
         
         sentencia:str = "INSERT INTO autores (nombre, lugar_nacimiento) VALUE ('"+nombre_autor+"','"+lugar_nacimiento+"')"
         
+        cursor.execute(sentencia)
         db.commit()
         db.close()
 
-        return json.dumps([True,"Datos insertados correctamente"])
+        return Response(json.dumps("Datos insertados correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"[ERROR]" + str(e)])
+        return Response(json.dumps("[ERROR]" + str(e)),mimetype="application/json")
 
 
 
 # public // Edit the book with the parameters given // Edita el libro con los parametros dados
 # Hay que pasar todos los atributos aunque no los vayamos a modificar. No se puede modificar el id del autor.
-@app.route('/editarLibro', methods=['POST'])
-def editarLibro()->list:
-    id_libro:str = request.form['id_libro']
-    titulo:str = request.form['titulo']
-    editorial:str = request.form['editorial']
-    lugar_publicacion:str = request.form['lugar_publicacion']
-    fecha:str = request.form['fecha']
-    descripcion:str = request.form['descripcion']
-
-    try:
-        db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
-
-        cursor = db.cursor()
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-        cursor.execute("UPDATE libros SET titulo ='"+titulo+"' , editorial ='"+editorial+"' ,lugar_publicacion ='"+lugar_publicacion+"' ,fecha ='"+fecha+"' ,descripcion ='"+descripcion+"'WHERE id='"+id_libro+"'")
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-        
+@app.route('/editarLibro/<id>', methods=['GET', 'PUT'])
+def editarLibro(id)->list:
+    if request.method == "GET":
+        busqueda:str = id
+        db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
+        cursor= db.cursor()
+        cursor.execute("SELECT * FROM libros WHERE id= '"+busqueda+"'")
+        libros = []
+        for item in cursor.fetchall():
+            libros.append(item)
         db.commit()
         db.close()
+        return Response(json.dumps(libros[0]), mimetype="application/json")
+    else:
+        id_libro:str = id
+        titulo:str = request.form['titulo']
+        editorial:str = request.form['editorial']
+        lugar_publicacion:str = request.form['lugar_publicacion']
+        fecha:str = request.form['fecha']
+        descripcion:str = request.form['descripcion']
 
-        return json.dumps([True,"Libro actualizado correctamente"])
-    except Exception as e:
-        return json.dumps([False,"An error has ocurred:" + str(e)])
+        try:
+            db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
 
-@app.route('/editarAutor', methods=['POST'])
+            cursor = db.cursor()
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+            cursor.execute("UPDATE libros SET titulo ='"+titulo+"' , editorial ='"+editorial+"' ,lugar_publicacion ='"+lugar_publicacion+"' ,fecha ='"+fecha+"' ,descripcion ='"+descripcion+"'WHERE id='"+id_libro+"'")
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            
+            db.commit()
+            db.close()
+
+            return Response(json.dumps("Libro actualizado correctamente"),mimetype="application/json")
+        except Exception as e:
+            return Response(json.dumps("An error has ocurred:" + str(e)),mimetype="application/json")
+
+@app.route('/editarAutor', methods=['PUT'])
 def editarAutor()->list:
     id_autor:str = request.form['id_autor']
     nombre:str = request.form['nombre']
@@ -343,9 +361,9 @@ def editarAutor()->list:
         db.commit()
         db.close()
 
-        return json.dumps([True,"Autor actualizado correctamente"])
+        return Response(json.dumps("Autor actualizado correctamente"),mimetype="application/json")
     except Exception as e:
-        return json.dumps([False,"An error has ocurred:"+ str(e)])
+        return Response(json.dumps("An error has ocurred:"+ str(e)),mimetype="application/json")
 
 
 #TEST FUNCTIONS FOR CALLING FROM FRONT
