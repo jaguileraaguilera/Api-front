@@ -5,8 +5,6 @@ import os
 from flask import *
 from flask_cors import CORS, cross_origin
 
-
-
 host = "localhost"
 user = "root"
 password = ""
@@ -239,7 +237,7 @@ def realizarBusquedaLibro()-> list: # búsqueda por id
 
     db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
     cursor= db.cursor()
-    cursor.execute("SELECT * FROM libros WHERE id= '"+busqueda+"'")
+    cursor.execute(f"SELECT * FROM libros WHERE id LIKE '%{busqueda}%'")
     libros = []
     for item in cursor.fetchall():
         libros.append(item)
