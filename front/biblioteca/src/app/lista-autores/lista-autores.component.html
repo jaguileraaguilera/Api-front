@@ -1,0 +1,16 @@
+<table id="listado_autores" border="1">
+    <tr>
+        <td>ID del autor</td>
+        <td>Nombre</td>
+        <td>Lugar de nacimiento</td>
+        <td>¿Modificar?</td>
+        <td>Eliminar</td>
+    </tr>
+    <tr class="autor" *ngFor="let autor of mostrarAutores(); index as i">
+        <td>{{autor.id_autor}}</td>
+        <td>{{autor.nombre}}</td>
+        <td>{{autor.lugar_nacimiento}}</td>
+        <td><a href="#">Modificar</a></td>
+        <td><a href="#">Eliminar</a></td>
+    </tr>
+</table>

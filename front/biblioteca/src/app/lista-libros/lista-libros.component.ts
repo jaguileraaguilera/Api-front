@@ -30,7 +30,7 @@ export class ListaLibrosComponent implements OnInit {
         if (!this.filtro_busqueda)
           mostrar.push(libro);
         else {
-          if (libro.id == this.filtro_busqueda)
+          if (libro.id.includes(this.filtro_busqueda))
             mostrar.push(libro);
         }
       }
@@ -38,6 +38,4 @@ export class ListaLibrosComponent implements OnInit {
 
     return mostrar;
   }
-
-
 }
