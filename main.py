@@ -234,18 +234,18 @@ def eliminarAutor()->list:
 
 # public // Search book // Busca libro 
 @app.route('/realizarBusquedaLibro', methods=['POST']) 
-def realizarBusquedaLibro()->list: # búsqueda por id
+def realizarBusquedaLibro()-> list: # búsqueda por id
     busqueda:str = request.form['busqueda']
 
     db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
     cursor= db.cursor()
-    cursor.execute("SELECT titulo, editorial, lugar_publicacion, fecha, descripcion FROM libros WHERE id= '"+busqueda+"'")
+    cursor.execute("SELECT * FROM libros WHERE id= '"+busqueda+"'")
     libros = []
     for item in cursor.fetchall():
         libros.append(item)
     db.commit()
     db.close()
-    return json.dumps([True, libros])
+    return Response(json.dumps(libros), mimetype="application/json")
 
 # public // Creates a new row inside table // Crea una nueva fila dentro de la tabla   
 # id_libro must have the same structure that in the db "a1234567"
@@ -308,29 +308,41 @@ def addAutor()->list:
 
 # public // Edit the book with the parameters given // Edita el libro con los parametros dados
 # Hay que pasar todos los atributos aunque no los vayamos a modificar. No se puede modificar el id del autor.
-@app.route('/editarLibro', methods=['PUT'])
-def editarLibro()->list:
-    id_libro:str = request.form['id_libro']
-    titulo:str = request.form['titulo']
-    editorial:str = request.form['editorial']
-    lugar_publicacion:str = request.form['lugar_publicacion']
-    fecha:str = request.form['fecha']
-    descripcion:str = request.form['descripcion']
-
-    try:
-        db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
-
-        cursor = db.cursor()
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-        cursor.execute("UPDATE libros SET titulo ='"+titulo+"' , editorial ='"+editorial+"' ,lugar_publicacion ='"+lugar_publicacion+"' ,fecha ='"+fecha+"' ,descripcion ='"+descripcion+"'WHERE id='"+id_libro+"'")
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-        
+@app.route('/editarLibro/<id>', methods=['GET', 'PUT'])
+def editarLibro(id)->list:
+    if request.method == "GET":
+        busqueda:str = id
+        db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
+        cursor= db.cursor()
+        cursor.execute("SELECT * FROM libros WHERE id= '"+busqueda+"'")
+        libros = []
+        for item in cursor.fetchall():
+            libros.append(item)
         db.commit()
         db.close()
+        return Response(json.dumps(libros[0]), mimetype="application/json")
+    else:
+        id_libro:str = id
+        titulo:str = request.form['titulo']
+        editorial:str = request.form['editorial']
+        lugar_publicacion:str = request.form['lugar_publicacion']
+        fecha:str = request.form['fecha']
+        descripcion:str = request.form['descripcion']
 
-        return Response(json.dumps("Libro actualizado correctamente"),mimetype="application/json")
-    except Exception as e:
-        return Response(json.dumps("An error has ocurred:" + str(e)),mimetype="application/json")
+        try:
+            db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
+
+            cursor = db.cursor()
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+            cursor.execute("UPDATE libros SET titulo ='"+titulo+"' , editorial ='"+editorial+"' ,lugar_publicacion ='"+lugar_publicacion+"' ,fecha ='"+fecha+"' ,descripcion ='"+descripcion+"'WHERE id='"+id_libro+"'")
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            
+            db.commit()
+            db.close()
+
+            return Response(json.dumps("Libro actualizado correctamente"),mimetype="application/json")
+        except Exception as e:
+            return Response(json.dumps("An error has ocurred:" + str(e)),mimetype="application/json")
 
 @app.route('/editarAutor', methods=['PUT'])
 def editarAutor()->list:

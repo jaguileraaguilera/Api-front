@@ -1,8 +1,22 @@
-<div>
-    <ul>
-        <li *ngFor="let libro of mostrarLibros(); index as i">
-            {{libro.titulo}}
-        </li>
-    </ul>
-</div>
-<!-- {{lista_libros}} -->
+<table id="listado_libros" border="1">
+    <tr >
+        <td>ID</td>
+        <td>ID de autor</td>
+        <td>Título</td>
+        <td>Editorial</td>
+        <td>Lugar de publicación</td>
+        <td>Fecha</td>
+        <td>Descripción</td>
+        <td>¿Modificar?</td>
+    </tr>
+    <tr class="libro" *ngFor="let libro of mostrarLibros(); index as i">
+        <td>{{libro.id}}</td>
+        <td>{{libro.id_autor}}</td>
+        <td>{{libro.titulo}}</td>
+        <td>{{libro.editorial}}</td>
+        <td>{{libro.lugar_publicacion}}</td>
+        <td>{{libro.fecha}}</td>
+        <td>{{libro.descripcion}}</td>
+        <td><a href="#">Modificar</a></td>
+    </tr>
+</table>
