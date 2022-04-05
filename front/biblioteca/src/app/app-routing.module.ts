@@ -5,7 +5,7 @@ import { ListaLibrosComponent } from './lista-libros/lista-libros.component';
 
 const routes: Routes = [
   { path: '', component: ListaLibrosComponent },
-  { path: '', component: ListaAutoresComponent }
+  { path: '', component: ListaAutoresComponent, outlet:'secondary'}
 ];
 
 @NgModule({
