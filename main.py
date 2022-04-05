@@ -342,26 +342,38 @@ def editarLibro(id)->list:
         except Exception as e:
             return Response(json.dumps("An error has ocurred:" + str(e)),mimetype="application/json")
 
-@app.route('/editarAutor', methods=['PUT'])
-def editarAutor()->list:
-    id_autor:str = request.form['id_autor']
-    nombre:str = request.form['nombre']
-    lugar_nacimiento:str = request.form['lugar_nacimiento']
-
-    try:
-        db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
-
-        cursor = db.cursor()
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
-        cursor.execute("UPDATE autores SET nombre ='"+nombre+"',lugar_nacimiento ='"+lugar_nacimiento+f"' WHERE id={id_autor}")
-        cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
-        
+@app.route('/editarAutor/<id>', methods=['GET','PUT'])
+def editarAutor(id)->list:
+    if request.method == "GET":
+        busqueda:str = id
+        db = pymysql.connect(host =host, user =user, passwd =password, db = database, charset = charset)
+        cursor= db.cursor()
+        cursor.execute("SELECT * FROM autores WHERE id= '"+busqueda+"'")
+        autores = []
+        for item in cursor.fetchall():
+            autores.append(item)
         db.commit()
         db.close()
+        return Response(json.dumps(autores[0]), mimetype="application/json")
+    else:
+        id_autor:str = id
+        nombre:str = request.form['nombre']
+        lugar_nacimiento:str = request.form['lugar_nacimiento']
 
-        return Response(json.dumps("Autor actualizado correctamente"),mimetype="application/json")
-    except Exception as e:
-        return Response(json.dumps("An error has ocurred:"+ str(e)),mimetype="application/json")
+        try:
+            db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
+
+            cursor = db.cursor()
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 0;")
+            cursor.execute("UPDATE autores SET nombre ='"+nombre+"',lugar_nacimiento ='"+lugar_nacimiento+f"' WHERE id={id_autor}")
+            cursor.execute("SET FOREIGN_KEY_CHECKS = 1;")
+            
+            db.commit()
+            db.close()
+
+            return Response(json.dumps("Autor actualizado correctamente"),mimetype="application/json")
+        except Exception as e:
+            return Response(json.dumps("An error has ocurred:"+ str(e)),mimetype="application/json")
 
 
 #TEST FUNCTIONS FOR CALLING FROM FRONT

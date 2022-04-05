@@ -16,4 +16,13 @@ export class Libro {
         this.fecha = fecha;
         this.descripcion = descripcion;
     }
+
+    toJson() {
+        let json = {};
+        for (let atrib in this) {
+            json[atrib] = this.atrib;
+        }
+
+        return json;
+    }
 }
