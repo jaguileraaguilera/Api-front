@@ -20,6 +20,6 @@
         <td>{{libro.lugar_publicacion}}</td>
         <td>{{libro.fecha}}</td>
         <td>{{libro.descripcion}}</td>
-        <td><button (click)="modificarLibros(libro.id)">Modificar</button></td>
+        <td><a routerLink="/modificarLibro/{{libro.id}}">Modificar</a></td>
     </tr>
 </table>
