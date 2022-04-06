@@ -1,1 +1,14 @@
-<p>modificar-libro works!</p>
+<p>Modificar el libro seleccionado:</p>
+
+<table id="libro_seleccionado" border="1">
+    <tr class="libro" *ngFor="let libro of modificarGet(); index as i">
+        <td>{{libro.id}}</td>
+        <td>{{libro.id_autor}}</td>
+        <td>{{libro.titulo}}</td>
+        <td>{{libro.editorial}}</td>
+        <td>{{libro.lugar_publicacion}}</td>
+        <td>{{libro.fecha}}</td>
+        <td>{{libro.descripcion}}</td>
+        <td><a routerLink="/modificarLibro/{{libro.id}}">Modificar</a></td>
+    </tr>
+</table>

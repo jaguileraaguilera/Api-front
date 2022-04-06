@@ -19,6 +19,7 @@ export class ListaLibrosComponent implements OnInit {
   ngOnInit(): void {
     this.datosLibros.listarLibros().subscribe(data =>
       this.lista_libros.push(data));
+    
   }
 
   mostrarLibros() {
