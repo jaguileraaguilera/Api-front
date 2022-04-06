@@ -19,7 +19,7 @@ export class ListaAutoresComponent implements OnInit {
   }
 
   mostrarAutores() {
-    console.log(this.lista_autores);
+    // console.log(this.lista_autores);
     let mostrar = [];
 
     for (let lista_anidada of this.lista_autores) {
@@ -29,5 +29,9 @@ export class ListaAutoresComponent implements OnInit {
       }
 
     return mostrar;
+  }
+
+  eliminarAutor(id) {
+    this.datosAutores.borrarAutor(id).subscribe((data) =>  window.location.reload());
   }
 }
