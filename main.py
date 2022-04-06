@@ -25,7 +25,7 @@ def creaDB():
 
         db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
         cursor= db.cursor()
-        
+
         with open('./sql/autores.sql','r') as sql_file:
             cursor.execute(sql_file.read())
 
@@ -205,9 +205,9 @@ def nuevoRegistroPorTexto()->list:
         return json.dumps([False, "[ERROR]:" + str(e)])
 
 # public // Remove Author // Elimina Autor
-@app.route('/eliminarAutor', methods=['DELETE'])
-def eliminarAutor()->list:
-    id_autor:str = request.form['id_autor']
+@app.route('/eliminarAutor/<id>', methods=['DELETE'])
+def eliminarAutor(id)->list:
+    id_autor:str = id
 
     try:
         db = pymysql.connect(host= host, user= user, passwd= password, db= database, charset= charset)
