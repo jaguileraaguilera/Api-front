@@ -13,11 +13,13 @@ export class ListaLibrosComponent implements OnInit {
   lista_libros = new Array();
 
   constructor(public datosLibros : ServicioLibrosService) {
+    this.lista_libros = [];
   }
 
   ngOnInit(): void {
     this.datosLibros.listarLibros().subscribe(data =>
       this.lista_libros.push(data));
+    
   }
 
   mostrarLibros() {

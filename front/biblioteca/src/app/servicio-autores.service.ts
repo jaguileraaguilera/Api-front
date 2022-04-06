@@ -12,4 +12,15 @@ export class ServicioAutoresService {
   public listarAutores() {  
     return this.http.get(`${this.endPoint}recuperarTodosAutores`);
   }
+
+  public borrarAutor(id) {
+    console.log(id);
+    // this.http.get(`${this.endPoint}recuperarTodosAutores`);
+    try {
+      return this.http.delete(`${this.endPoint}eliminarAutor/${id}`);
+    }
+    catch {
+      console.log("error");
+    }
+  }
 }
