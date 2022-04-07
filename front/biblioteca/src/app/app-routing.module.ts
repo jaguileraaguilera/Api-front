@@ -8,7 +8,7 @@ import { AddAuthorComponent } from './add-author/add-author.component';
 
 const routes: Routes = [
   { path: '', component: ListaLibrosComponent },
-  { path: '', component: ListaAutoresComponent, outlet:'secondary'},
+  // { path: '', component: ListaAutoresComponent, outlet:'secondary'},
   { path: 'modificarLibro/:id', component: ModificarLibroComponent},
   { path: 'addLibro', component: AddBookComponent},
   { path: 'addAutor', component: AddAuthorComponent}
