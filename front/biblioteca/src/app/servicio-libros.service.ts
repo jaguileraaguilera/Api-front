@@ -20,7 +20,7 @@ export class ServicioLibrosService {
   public modificarLibrosPost(libro) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json; charset=utf-8');  
-    return this.http.put(`${this.endPoint}editarLibro/${libro.id}`, libro.toJson(),
+    return this.http.put(`${this.endPoint}editarLibro/${libro.id}`, libro,
     {headers: headers});
   }
 
