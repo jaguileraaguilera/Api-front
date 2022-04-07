@@ -3,27 +3,25 @@
 <form [formGroup]="comprobarForm" (ngSubmit)="modificarPost()">
     <table id="libro_seleccionado" border="1">
         <tr class="libro" *ngFor="let libro of modificarGet(); index as i">
-            <label for="id">Id libro</label>
-            <td><input type="text" value="{{libro.id}}" [(ngModel)]="id" disabled="disabled"/></td>
-            
-            <label for="id_autor">Id autor</label>
-            <td><input type="text" value="{{libro.id_autor}}" [(ngModel)]="id_autor"/></td>
+            <label for="id_libro">Id libro</label>
+            <td><input type="text" value="{{libro.id_libro}}" formControlName="id" disabled="disabled"/></td>
             
             <label for="titulo">Titulo</label>
-            <td><input type="text" value="{{libro.titulo}}" [(ngModel)]="titulo"/></td>
+            <td><input type="text" value="{{libro.titulo}}" formControlName="titulo"/></td>
             
             <label for="editorial">Editorial</label>
-            <td><input type="text" value="{{libro.editorial}}" [(ngModel)]="editorial"/></td>
+            <td><input type="text" value="{{libro.editorial}}" formControlName="editorial"/></td>
             
             <label for="lugar_publicacion">Lugar de publicacion</label>
-            <td><input type="text" value="{{libro.lugar_publicacion}}" [(ngModel)]="lugar_publicacion"/></td>
+            <td><input type="text" value="{{libro.lugar_publicacion}}" formControlName="lugar_publicacion"/></td>
             
             <label for="fecha">Fecha</label>
-            <td><input type="text" value="{{libro.fecha}}" [(ngModel)]="fecha"/></td>
+            <td><input type="text" value="{{libro.fecha}}" formControlName="fecha"/></td>
             
             <label for="descripcion">Descripcion</label>
-            <td><input type="text" value="{{libro.descripcion}}" [(ngModel)]="descripcion"/></td>
+            <td><input type="text" value="{{libro.descripcion}}" formControlName="descripcion"/></td>
         </tr>
-        <button class="button" type="submit">Modificar</button>
+        
     </table>
+    <button class="button" type="submit">Modificar</button>
 </form>

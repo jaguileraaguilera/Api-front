@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Libro } from '../entidades/libro';
 import { ServicioLibrosService } from '../servicio-libros.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-modificar-libro',
@@ -13,31 +13,38 @@ export class ModificarLibroComponent implements OnInit {
   recogerId="";
   libroModificado=new Array();
 
-  comprobarForm=this.formBuilder.group({
-    id:'',
-    id_autor:'',
-    titulo:'',
-    editorial:'',
-    lugar_publicacion:'',
-    fecha:'',
-    descripcion:'',
+  comprobarForm=new FormGroup({
+    id_libro:new FormControl(''),
+    titulo:new FormControl(''),
+    editorial:new FormControl(''),
+    lugar_publicacion:new FormControl(''),
+    fecha:new FormControl(''),
+    descripcion:new FormControl('')
   })
 
   constructor(private route: ActivatedRoute, 
     public listaModificar: ServicioLibrosService, 
-    private formBuilder: FormBuilder,
+    //private formBuilder: FormBuilder,
     private router: Router){ 
       this.libroModificado=[];
     }
     
 
   ngOnInit(): void {
-    // let id=this.route.snapshot.paramMap.get('id'); 
-    this.route.paramMap.subscribe((params : ParamMap)=> {  
-      this.recogerId=params.get('id')});
 
-    this.listaModificar.modificarLibros(this.recogerId).subscribe(data =>
-      this.libroModificado.push(data));
+    // this.route.paramMap.subscribe((params : ParamMap)=> {  
+    //   this.recogerId=params.get('id')});
+
+    this.listaModificar.modificarLibros(this.route.snapshot.paramMap.get('id')).subscribe(data =>
+      this.comprobarForm=new FormGroup({
+        id_libro:new FormControl(data['id']),
+        titulo:new FormControl(data['titulo']),
+        editorial:new FormControl(data['editorial']),
+        lugar_publicacion:new FormControl(data['lugar_publicacion']),
+        fecha:new FormControl(data['fecha']),
+        descripcion:new FormControl(data['descripcion'])
+      })
+    )
   }
 
   modificarGet() {
@@ -56,12 +63,5 @@ export class ModificarLibroComponent implements OnInit {
     this.listaModificar.modificarLibrosPost(this.comprobarForm.value);
     this.router.navigate(['']);
   }
-
-  // onSubmit(): void {
-  //   // Process checkout data here
-  //   this.items = this.cartService.clearCart();
-  //   console.warn('Your order has been submitted', this.checkoutForm.value);
-  //   this.checkoutForm.reset();
-  // }
 
 }
