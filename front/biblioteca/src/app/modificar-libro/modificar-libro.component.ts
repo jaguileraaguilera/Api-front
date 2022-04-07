@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Libro } from '../entidades/libro';
 import { ServicioLibrosService } from '../servicio-libros.service';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-modificar-libro',
@@ -12,11 +13,22 @@ export class ModificarLibroComponent implements OnInit {
   recogerId="";
   libroModificado=new Array();
 
+  comprobarForm=this.formBuilder.group({
+    id:'',
+    id_autor:'',
+    titulo:'',
+    editorial:'',
+    lugar_publicacion:'',
+    fecha:'',
+    descripcion:'',
+  })
+
   constructor(private route: ActivatedRoute, 
-    public listaModificar: ServicioLibrosService){ 
+    public listaModificar: ServicioLibrosService, 
+    private formBuilder: FormBuilder,
+    private router: Router){ 
       this.libroModificado=[];
     }
-
     
 
   ngOnInit(): void {
@@ -38,5 +50,18 @@ export class ModificarLibroComponent implements OnInit {
     }
     return verLibro;
   }
+
+  modificarPost() {
+    console.log("Entran los datos del form")
+    this.listaModificar.modificarLibrosPost(this.comprobarForm.value);
+    this.router.navigate(['']);
+  }
+
+  // onSubmit(): void {
+  //   // Process checkout data here
+  //   this.items = this.cartService.clearCart();
+  //   console.warn('Your order has been submitted', this.checkoutForm.value);
+  //   this.checkoutForm.reset();
+  // }
 
 }
