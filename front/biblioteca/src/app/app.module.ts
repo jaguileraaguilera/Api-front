@@ -8,6 +8,8 @@ import { ListaLibrosComponent } from './lista-libros/lista-libros.component';
 import { ModificarAutorComponent } from './modificar-autor/modificar-autor.component';
 import { ModificarLibroComponent } from './modificar-libro/modificar-libro.component';
 import { ListaAutoresComponent } from './lista-autores/lista-autores.component';
+import { AddBookComponent } from './add-book/add-book.component';
+import { AddAuthorComponent } from './add-author/add-author.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import { ListaAutoresComponent } from './lista-autores/lista-autores.component';
     ModificarAutorComponent,
     ModificarLibroComponent,
     ListaLibrosComponent,
-    ListaAutoresComponent
+    ListaAutoresComponent,
+    AddBookComponent,
+    AddAuthorComponent
   ],
   imports: [
     BrowserModule,
