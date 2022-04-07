@@ -1,5 +1,8 @@
 <label>Busca libros:</label>
-<input  type="text" [(ngModel)]="filtro_busqueda" placeholder="ID" (keyup)="mostrarLibros()"/>
+<input  type="text" [(ngModel)]= "filtro_busqueda" placeholder="ID" (keyup)="mostrarLibros()"/>
+
+<a routerLink="/addLibro">Crear libro</a>
+<a routerLink="/addAutor">Crear autor</a>
 
 <table id="listado_libros" border="1">
     <tr>
@@ -23,3 +26,5 @@
         <td><a routerLink="/modificarLibro/{{libro.id}}">Modificar</a></td>
     </tr>
 </table>
+
+
