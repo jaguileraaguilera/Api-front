@@ -1,4 +1,4 @@
-<form id="libro" action="localhost:5000/addLibro" method="POST">
+<form id="libro" (ngSubmit) = "add_book()" method="POST">
     <label for="id_libro">Id libro:</label><br>
     <input type="text" id="id_libro" name="id_libro"><br>
 
@@ -20,5 +20,5 @@
     <label for="descripcion">Descripcion:</label><br>
     <input type="text" id="descripcion" name="descripcion"><br>
 
-    <button (click) = "add_book()" type = "submit">Enviar</button>
+    <button type = "submit">Enviar</button>
 </form>

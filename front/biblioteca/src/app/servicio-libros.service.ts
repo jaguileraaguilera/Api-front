@@ -27,6 +27,7 @@ export class ServicioLibrosService {
   public modificarAutores(id) {  
     return this.http.get(`${this.endPoint}editarAutor/${id}`);
   }
+
   
   // /**
   //  * Método que accede a todas las personas del servicio rest
